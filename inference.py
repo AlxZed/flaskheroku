@@ -6,8 +6,7 @@ import json
 
 app = Flask(__name__)
 
-loaded_model = open('/Users/alex/Downloads/trained_model.pkl', 'rb')
-server_model = pickle.load(loaded_model)
+server_model = pickle.load(open('trained_model.pkl', 'rb'))
 
 
 @app.route('/')
@@ -25,8 +24,6 @@ def get_prediction():
     
     # predict
     prediction = server_model.predict(X)
-
-    output = f'prediction: {prediction[0]}'
 
     return f'prediction: {prediction[0]}'
 
@@ -60,13 +57,8 @@ def get_multiple_predictions():
 
 
 if __name__ == '__main__':
-    # Heroku provides environment variable 'PORT' that should be listened on by Flask
     port = os.environ.get('PORT')
-
     if port:
-        # 'PORT' variable exists - running on Heroku, listen on external IP and on given by Heroku port
-        example_app.run(host='0.0.0.0', port=int(port))
+        app.run(host='0.0.0.0', port=int(port), debug=True)
     else:
-        # 'PORT' variable doesn't exist, running not on Heroku, presumabely running locally, run with default
-        #   values for Flask (listening only on localhost on default Flask port)
-        example_app.run()
+        app.run(debug=True)
